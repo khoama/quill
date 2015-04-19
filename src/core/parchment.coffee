@@ -1,9 +1,92 @@
-class Node
+class TreeNode
+  constructor: ->
+    @prev = @next = @parent = null
+    @children = null
+
+  length: ->
+    return 1
+
+  append: (node) ->
+    this.insertBefore(node, null)
+
+  insertBefore: (node, refNode) ->
+    @children = new LinkedList() unless @children?
+    @children.insertBefore(node, refNode)
+    node.parent = this
+
+  remove: ->
+    return unless @parent?.children?
+    @parent.children.remove(this)
+    @parent = @prev = @next = null
+
+  replace: (node) ->
+    return unless @parent?.children?
+    @parent.children.insertBefore(node, this)
+    this.remove()
+
+  wrap: (node) ->
+    this.replace(node)
+    node.append(this)   # node should have no children
+    @parent = node
 
 
+class LinkedList
+  constructor: ->
+    @head = @tail = null
+    @length = 0
+
+  append: (node) ->
+    this.insertBefore(node, null)
+
+  insertBefore: (node, refNode) ->
+    node.next = refNode
+    if refNode?
+      node.prev = refNode.prev
+      refNode.prev.next = node if refNode.prev?
+      refNode.prev = node
+      node = @head if refNode == @head
+    else if @tail?
+      @tail.next = node
+      @tail = node
+    else
+      @head = @tail = node
+    @length += 1
+
+  remove: (node) ->
+    node.prev.next = node.next if node.prev?
+    node.next.prev = node.prev if node.next?
+    @head = node.next if node == @head
+    @tail = node.prev if node == @tail
+    node.prev = node.next = null
+    @length -= 1
+
+  forEach: (callback) ->
+    cur = @head
+    while cur?
+      next = cur.next
+      callback(cur)
+      cur = next
+
+  forEachAt: (index, length, callback) ->
+    curNode = @head
+    curIndex = 0
+    while cur? && curIndex <= index + length
+      next = cur.next
+      curLength = cur.length()
+      if curIndex <= index && index <= curIndex + curLength
+        callback(cur, index - curIndex, curLength)
+      cur = next
+      curIndex += curLength
+
+  reduce: (callback, memo) ->
+    cur = @head
+    while cur?
+      next = cur.next
+      memo = callback(memo, cur)
+      cur = next
 
 
-class ParchmentNode extends Node
+class ParchmentNode extends TreeNode
   constructor: ->
     this.children = new LinkedList()
 
@@ -33,7 +116,7 @@ class ParchmentNode extends Node
       return memo + child.getLength()
     , 0)
 
-  wrap: (name, value) ->
+  replace: (name, value) ->
     node = Parchment.create(name, value)
     this.attributes.forEach((attribute) =>
       attribute.add(node)
@@ -41,7 +124,15 @@ class ParchmentNode extends Node
     )
     super
 
-  replace: (name, value) ->
+  split: (index) ->
+    clone = this.clone()
+    this.parent.insertBefore(clone, this)
+    this.children.forEachAt(0, index, (child, offset, length) ->
+      child.remove()
+      clone.append(child)
+    )
+
+  wrap: (name, value) ->
     node = Parchment.create(name, value)
     this.attributes.forEach((attribute) =>
       attribute.add(node)
@@ -54,6 +145,7 @@ class Parchment extends ParchmentNode
   @Node: ParchmentNode
 
   @create: (name, value) ->
+    # Create both ParchmentNode and parallel DOM node
 
   @define: (nodeClass) ->
 
