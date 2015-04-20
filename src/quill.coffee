@@ -8,8 +8,12 @@ Format        = require('./core/format')
 Normalizer    = require('./core/normalizer')
 Range         = require('./lib/range')
 
+Parchment     = require('./core/document/parchment')
+
 
 class Quill extends EventEmitter2
+  @Parchment: Parchment
+
   @version: pkg.version
   @editors: []
 
