@@ -34,6 +34,7 @@ module.exports = (grunt) ->
         # We dont do **/*.coffee to control order of tests
         'test/unit/lib/*.coffee'
         'test/unit/core/*.coffee'
+        'test/unit/core/document/*.coffee'
         'test/unit/modules/*.coffee'
         'test/unit/themes/*.coffee'
       ]
