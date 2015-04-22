@@ -14,7 +14,6 @@ Quill.Document.DOMNode       = require('../src/core/document/dom-node')
 Quill.Document.ParchmentNode = require('../src/core/document/parchment-node')
 Quill.Document.Parchment     = require('../src/core/document/parchment')
 Quill.Document.TreeList      = require('../src/core/document/tree-list')
-Quill.Document.TreeNode      = require('../src/core/document/tree-node')
 
 Quill.Lib =
   EventEmitter2 : require('eventemitter2').EventEmitter2
