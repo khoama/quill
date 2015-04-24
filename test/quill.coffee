@@ -10,8 +10,6 @@ Quill.Line       = require('../src/core/line')
 Quill.Normalizer = require('../src/core/normalizer')
 Quill.Selection  = require('../src/core/selection')
 
-Quill.Document.DOMNode       = require('../src/core/document/dom-node')
-Quill.Document.ParchmentNode = require('../src/core/document/parchment-node')
 Quill.Document.Parchment     = require('../src/core/document/parchment')
 Quill.Document.TreeList      = require('../src/core/document/tree-list')
 

@@ -105,6 +105,15 @@ describe('TreeList', ->
       expect(@spy.callback.calls.count()).toEqual(0)
     )
 
+    it('find', ->
+      @list.append(@a, @b, @c)
+      expect(@list.find(0)).toEqual([@a, 0])
+      expect(@list.find(2)).toEqual([@a, 2])
+      expect(@list.find(3)).toEqual([@b, 0])
+      expect(@list.find(4)).toEqual([@b, 1])
+      expect(@list.find(10)).toEqual(false)
+    )
+
     it('forEach', ->
       @list.append(@a, @b, @c)
       @list.forEach(@spy.callback)
