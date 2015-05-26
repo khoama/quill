@@ -124,9 +124,19 @@ class Line extends LinkedList.Node
     formatName = _.find(Object.keys(attributes), (name) =>
       return @doc.formats[name].isType(Format.types.EMBED)
     )
+
     node = @doc.formats[formatName].add({}, attributes[formatName])  # TODO fix {} hack
     attributes = _.clone(attributes)
     delete attributes[formatName]
+
+        #Temporary fix for code cell
+    if node.tagName == 'IFRAME'
+      if attributes["id"]
+        node.setAttribute("id", attributes["id"])
+
+      if attributes["klass"]
+        node.setAttribute("class", attributes["klass"])
+          
     this._insert(offset, node, attributes)
 
   insertText: (offset, text, formats = {}) ->

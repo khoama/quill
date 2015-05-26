@@ -358,6 +358,7 @@ dom = _.extend(dom,
   DEFAULT_BREAK_TAG: 'BR'
   DEFAULT_INLINE_TAG: 'SPAN'
   EMBED_TEXT: '!' # No reason we picked ! besides it being one character (so delta cannot split it up)
+  CODECELL_TEXT: '%'
 
   FONT_SIZES:
     '10px': 1
@@ -414,7 +415,9 @@ dom = _.extend(dom,
   }
 
   EMBED_TAGS: {
-    'IMG'
+    'IMG',
+    'IFRAME',
+    'CODE'
   }
 
   LINE_TAGS: {
@@ -436,6 +439,8 @@ dom = _.extend(dom,
     'EMBED'
     'HR'
     'IMG'
+    'IFRAME'
+    'CODE'
     'INPUT'
     'KEYGEN'
     'LINK'

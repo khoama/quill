@@ -41,7 +41,7 @@ class Format
 
     size:
       style: 'fontSize'
-      default: '13px'
+      default: '15px'
       prepare: (value) ->
         document.execCommand('fontSize', false, dom.convertFontSize(value))
 
@@ -60,6 +60,17 @@ class Format
       type: Format.types.EMBED
       tag: 'IMG'
       attribute: 'src'
+
+    code:
+      type: Format.types.EMBED
+      tag: 'IFRAME'
+      attribute: 'src'
+
+    id:
+      tag: ''
+
+    klass:
+      tag: ''
 
     align:
       type: Format.types.LINE
@@ -92,15 +103,16 @@ class Format
       if node.parentNode.tagName == node.parentNode.nextSibling?.tagName
         dom(node.parentNode).merge(node.parentNode.nextSibling)
     if _.isString(@config.tag)
-      formatNode = document.createElement(@config.tag)
-      if dom.VOID_TAGS[formatNode.tagName]?
-        dom(node).replace(formatNode) if node.parentNode?
-        node = formatNode
-      else if this.isType(Format.types.LINE)
-        node = dom(node).switchTag(@config.tag)
-      else
-        dom(node).wrap(formatNode)
-        node = formatNode
+      if @config.tag != ""
+        formatNode = document.createElement(@config.tag)
+        if dom.VOID_TAGS[formatNode.tagName]?
+          dom(node).replace(formatNode) if node.parentNode?
+          node = formatNode
+        else if this.isType(Format.types.LINE)
+          node = dom(node).switchTag(@config.tag)
+        else
+          dom(node).wrap(formatNode)
+          node = formatNode
     if _.isString(@config.style) or _.isString(@config.attribute) or _.isString(@config.class)
       if _.isString(@config.class)
         node = this.remove(node)
@@ -114,6 +126,12 @@ class Format
         node.setAttribute(@config.attribute, value)
       if _.isString(@config.class)
         dom(node).addClass(@config.class + value)
+    if _.isString(@config?.wrapper?.tag)
+        wrapperTag = document.createElement @config.wrapper.tag
+        for k, v of @config.wrapper.attributes
+          wrapperTag.setAttribute k, v
+          dom(node).wrap wrapperTag
+          node = wrapperTag
     if _.isFunction(@config.add)
       node = @config.add(node, value)
     return node

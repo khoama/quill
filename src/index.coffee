@@ -7,5 +7,6 @@ require('./modules/paste-manager')
 require('./modules/toolbar')
 require('./modules/tooltip')
 require('./modules/undo-manager')
+require('./modules/codecell')
 
 module.exports = require('./quill')

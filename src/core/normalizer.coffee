@@ -25,8 +25,13 @@ class Normalizer
 
   constructor: ->
     @whitelist =
-      styles: {}
-      tags: {}
+      styles: {
+        'height'
+      }
+      tags: {},
+      attributes: {
+        'id'
+      }
     @whitelist.tags[dom.DEFAULT_BREAK_TAG] = true
     @whitelist.tags[dom.DEFAULT_BLOCK_TAG] = true
     @whitelist.tags[dom.DEFAULT_INLINE_TAG] = true

@@ -17,7 +17,7 @@ class Quill extends EventEmitter2
   @themes: []
 
   @DEFAULTS:
-    formats: ['align', 'bold', 'italic', 'strike', 'underline', 'color', 'background', 'font', 'size', 'link', 'image', 'bullet', 'list']
+    formats: ['align', 'bold', 'italic', 'strike', 'underline', 'color', 'background', 'font', 'size', 'link', 'image', 'bullet', 'list', 'code', 'id', 'klass']
     modules:
       'keyboard': true
       'paste-manager': true
@@ -164,15 +164,20 @@ class Quill extends EventEmitter2
       return if _.isString(op.insert) then op.insert else ''
     ).join('')
 
-  insertEmbed: (index, type, url, source) ->
-    [index, end, formats, source] = this._buildParams(index, 0, type, url, source)
+  insertEmbed: (index, type, url, source, params) ->
+    [index, end, formats, source] = this._buildParams(index, 0, type, url, source, params)
+
+     #Allow extra attributes to be save to deltas
+    if _.isObject(params) && params!= null
+      formats = _.extend(params, formats)
+
     delta = new Delta().retain(index).insert(1, formats)
     @editor.applyDelta(delta, source)
 
-  insertText: (index, text, name, value, source) ->
-    [index, end, formats, source] = this._buildParams(index, 0, name, value, source)
+  insertText: (index, text, name, value, source, params) ->
+    [index, end, formats, source] = this._buildParams(index, 0, name, value, source, params)
     return unless text.length > 0
-    delta = new Delta().retain(index).insert(text, formats)
+    delta = new Delta().retain(index).insert(text, formats, params)
     @editor.applyDelta(delta, source)
 
   onModuleLoad: (name, callback) ->
@@ -216,9 +221,12 @@ class Quill extends EventEmitter2
     delta = new Delta().insert(text)
     this.setContents(delta, source)
 
-  updateContents: (delta, source = Quill.sources.API) ->
+  updateContents: (delta, source = Quill.sources.API, callback) ->
     delta = { ops: delta } if Array.isArray(delta)
     @editor.applyDelta(delta, source)
+
+    if callback
+      callback.call()
 
   # fn(Number start, Number end, String name, String value, String source)
   # fn(Number start, Number end, Object formats, String source)
